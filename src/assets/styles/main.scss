@@ -1,0 +1,22 @@
+.flex {display: flex; flex-flow: row nowrap; justify-content: space-between; align-items: center;}
+.flex.jc-fe {justify-content: flex-end;}
+.flex-1 {flex: 1;}
+
+.page-list {
+  .el-form--inline .el-form-item {margin-right: 10px;}
+  .button-group {margin-bottom: 15px;}
+  .table {margin-bottom: 15px;}
+  .el-pagination {justify-content: center;} 
+}
+.page-detail {
+  .el-form-item {
+    width: 32%;
+  }
+}
+.search {
+  .el-form-item {width: 200px;}
+}
+
+.el-table {
+  .table-header {text-align: center;}
+}
