@@ -1,5 +1,6 @@
 .flex {display: flex; flex-flow: row nowrap; justify-content: space-between; align-items: center;}
 .flex.jc-fe {justify-content: flex-end;}
+.flex.ai-fs {align-items: flex-start;}
 .flex-1 {flex: 1;}
 
 .page-list {
@@ -15,6 +16,12 @@
 }
 .search {
   .el-form-item {width: 200px;}
+}
+.box {
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
 }
 
 .el-table {

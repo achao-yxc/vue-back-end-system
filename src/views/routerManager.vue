@@ -1,7 +1,7 @@
 <template>
-  <div class="p-router-manager flex">
-    <el-tree :data="treeData" @node-click="handleNodeChick" class="tree" highlight-current :expand-on-click-node="false" />
-    <div class="flex-1">
+  <div class="p-router-manager flex ai-fs">
+    <el-tree :data="treeData" @node-click="handleNodeChick" class="tree box" highlight-current :expand-on-click-node="false" />
+    <div class="flex-1 box">
       <div class="btnsgroup">
         <el-button type="primary" class="button" @click="addRoute">新增</el-button>
         <el-button type="danger" class="button" @click="delRoute">删除</el-button>
@@ -42,7 +42,7 @@
   const routeStore = useRouteStore()
   const treeData = ref([]),
   handleNodeChick = (data) => {
-    // console.log(data);
+    console.log(data);
     const { _id, parentId } = data
     selectedRouteId = _id
     selectedRouteParentId.value = parentId
@@ -101,6 +101,7 @@
   const addRoute = () => {
     form.value = {}
     if (selectedRouteId) form.value.parentId = selectedRouteId
+    console.log('addRoute', form.value)
   }
 
   const save = async () => {
@@ -112,6 +113,7 @@
       }
     }
     else {
+      // console.log(form.value)
       const { code, msg } = await add('route', form.value)
       if (code == 200) {
         ElMessage({ message: msg, type: 'success' })
@@ -126,6 +128,7 @@
     if (code == 200) {
       ElMessage({ message: msg, type: 'success' })
       getlist()
+      form.value = {}
     }
     else {
       ElMessage({ message: msg, type: 'warning' })
@@ -135,7 +138,7 @@
 
 <style lang="scss">
   .p-router-manager {
-    .tree {width: 200px;}
+    .tree {width: 200px; margin-right: 10px;}
     .el-form {
       .el-form-item {
         width: 360px;

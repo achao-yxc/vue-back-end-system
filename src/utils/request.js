@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 // const baseURL = process.env.NODE_ENV == 'development' ? services.development : services.production
 // let baseURL = 'http://10.62.29.136:3000/'
@@ -29,19 +30,19 @@ instance.interceptors.request.use(config => {
 
 // 响应拦截
 instance.interceptors.response.use(response => {
-  // console.log(response);
-  // let {data, data: {status, msg}} = responsez
-  // switch (status) {
+  console.log(response);
+  const { data: {code, msg} } = response
+  switch (code) {
   //   case 401:
   //     Toast.fail(msg)
   //     router.push({ name: 'RegisterIndex' })
   //     break;
-  //   case 500:
-  //     Toast.fail(msg)
-  //     break;
-  //   default:
-  //     break;
-  // }
+    case 500:
+      ElMessage.error(msg)
+      break;
+    default:
+      break;
+  }
 
   return response.data
 }, error => {
