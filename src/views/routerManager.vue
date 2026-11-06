@@ -39,6 +39,10 @@
   import { ElMessage } from 'element-plus'
   import { useRouteStore } from '@/store/route'
 
+  defineOptions({
+    name: 'routerManager'
+  })
+
   const routeStore = useRouteStore()
   const treeData = ref([]),
   handleNodeChick = (data) => {
@@ -67,41 +71,31 @@
     if (code == 200) {
       routeStore.saveRoute(data)
     }
-    // data.forEach((val) => {
-    //   const { routeName, parentId, children } = val
-    //   // if (parentId == 'root') {}
-    //   val.label = routeName
-    //   if (children && children.length > 0) {
-    //     val.children = children.map((child) => {
-    //       child.label = child.routeName
-    //       return child
-    //     })
-    //   }
-    // })
     handldRouteData(data)
     treeData.value = data
   }
   getlist()
 
-  const routeDataInit = (routeData) => {
-    let handleData = []
-    routeData.forEach(val => {
-      const { parentId } = val
-      if (parentId == 'root') {
-        handleData.push(val)
-      }
-      else {}
-    })
-  }
+  // const routeDataInit = (routeData) => {
+  //   let handleData = []
+  //   routeData.forEach(val => {
+  //     const { parentId } = val
+  //     if (parentId == 'root') {
+  //       handleData.push(val)
+  //     }
+  //     else {}
+  //   })
+  // }
 
   const formRef = ref(null),
-  form = ref({}),
+  form = ref({ component: 'Layout' }),
   rules = reactive([])
 
   const addRoute = () => {
-    form.value = {}
-    if (selectedRouteId) form.value.parentId = selectedRouteId
-    console.log('addRoute', form.value)
+    form.value = { component: 'Layout' }
+    if (selectedRouteId) {
+      form.value.parentId = selectedRouteId
+    }
   }
 
   const save = async () => {
@@ -113,11 +107,11 @@
       }
     }
     else {
-      // console.log(form.value)
       const { code, msg } = await add('route', form.value)
       if (code == 200) {
         ElMessage({ message: msg, type: 'success' })
         getlist()
+        formRef.value.resetFields()
       }
     }
   }
@@ -129,9 +123,6 @@
       ElMessage({ message: msg, type: 'success' })
       getlist()
       form.value = {}
-    }
-    else {
-      ElMessage({ message: msg, type: 'warning' })
     }
   }
 </script> 

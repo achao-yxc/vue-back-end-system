@@ -148,6 +148,6 @@
   .el-sub-menu__title {color: #fff;}
   .el-sub-menu__title:hover {background-color: #545c64;}
   .el-main {padding-top: 0;}
-  .el-tabs{position: sticky; top: 0; padding-top: 20px; z-index: 9; background-color: #fff;}
+  .el-tabs{position: sticky; top: 0; margin-bottom: 10px; padding-top: 20px; z-index: 9; background-color: #fff;}
 }
 </style>
