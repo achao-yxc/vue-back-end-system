@@ -76,17 +76,6 @@
   }
   getlist()
 
-  // const routeDataInit = (routeData) => {
-  //   let handleData = []
-  //   routeData.forEach(val => {
-  //     const { parentId } = val
-  //     if (parentId == 'root') {
-  //       handleData.push(val)
-  //     }
-  //     else {}
-  //   })
-  // }
-
   const formRef = ref(null),
   form = ref({ component: 'Layout' }),
   rules = reactive([])

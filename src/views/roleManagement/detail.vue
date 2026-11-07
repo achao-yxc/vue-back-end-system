@@ -9,14 +9,14 @@
         <el-input v-model="form.roleName" placeholder="请输入角色名称" />
       </el-form-item>
       <el-form-item label="角色路由" class="w-100">
-        <el-tree :data="treeData" node-key="_id" :default-expand-all="true" show-checkbox :default-checked-keys="form.routeIds" @check-change="handleCheckChange" />
+        <el-tree :data="treeData" node-key="_id" :default-expand-all="true" show-checkbox :default-checked-keys="form.routeIds" @check-change="handleCheckChange" ref="treeRef" />
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script setup>
-  import { reactive, ref, onActivated } from 'vue'
+  import { reactive, ref, onActivated, nextTick } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import { add, updateOne, detail, list } from '@/api/main'
   import { ElMessage, ElTree } from 'element-plus'
@@ -48,6 +48,7 @@
   const getDetail = async () => {
     const { data } = await detail(apiKey, { _id: route.query.id })
     form.value = data
+    treeRef.value.setCheckedKeys(data.routeIds)
   }
 
   const save = async () => {
@@ -84,6 +85,7 @@
     })
   }
 
+  const treeRef = ref(null)
   const treeData = ref([])
   const getRoutelist = async () => {
     const { data } = await list('route', {})
@@ -93,7 +95,7 @@
   getRoutelist()
 
   const handleCheckChange = (data, checked, indeterminate) => {
-    // console.log(data, checked, indeterminate)
+    console.log(data, checked, indeterminate)
     const { _id, parentId } = data
     if (checked) {
       if (!form.value.routeIds.includes(_id)) {
@@ -102,7 +104,6 @@
     } else {
       form.value.routeIds = form.value.routeIds.filter(id => id !== _id)
     }
-    // console.log(form.value.routeIds);
     
     // const getCheckedKeys = (nodes) => {
     //   let keys = []
