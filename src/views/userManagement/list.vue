@@ -32,7 +32,7 @@
           {{ row.status == 1 ? '启用' : '禁用' }}
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" />
+      <el-table-column prop="createTime" label="创建时间" width="120" />
       <el-table-column label="操作" width="200">
         <template #default="{ row }">
           <el-button type="primary" size="small" @click="goPage(row)">编辑</el-button>

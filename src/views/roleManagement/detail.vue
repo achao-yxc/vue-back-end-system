@@ -52,6 +52,7 @@
   }
 
   const save = async () => {
+    form.value.routeIds = treeRef.value.getCheckedKeys()
     if (form.value._id) {
       updateData()
     } else {
@@ -95,29 +96,17 @@
   getRoutelist()
 
   const handleCheckChange = (data, checked, indeterminate) => {
-    console.log(data, checked, indeterminate)
-    const { _id, parentId } = data
-    if (checked) {
-      if (!form.value.routeIds.includes(_id)) {
-        form.value.routeIds.push(_id)
-      }
-    } else {
-      form.value.routeIds = form.value.routeIds.filter(id => id !== _id)
-    }
-    
-    // const getCheckedKeys = (nodes) => {
-    //   let keys = []
-    //   nodes.forEach((node) => {
-    //     if (node.checked) {
-    //       keys.push(node._id)
-    //     }
-    //     if (node.children && node.children.length > 0) {
-    //       keys = keys.concat(getCheckedKeys(node.children))
-    //     }
-    //   })
-    //   return keys
+    // console.log(data, checked, indeterminate)
+    // const { _id, parentId } = data
+    // if (checked) {
+    //   if (!form.value.routeIds.includes(_id)) {
+    //     form.value.routeIds.push(_id)
+    //   }
+    // } else {
+    //   form.value.routeIds = form.value.routeIds.filter(id => id !== _id)
     // }
-    // form.value.routeIds = getCheckedKeys(treeData.value)
+    
+    // console.log('form', form.value)
   }
 </script>
 

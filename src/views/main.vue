@@ -10,7 +10,7 @@
     <el-container class="container">
       <el-aside class="menu">
         <el-menu router :default-active="menuActive">
-          <el-sub-menu :index="item.path" v-for="item in menuList" :key="item._id">
+          <el-sub-menu :index="item._id" v-for="item in menuList" :key="item._id">
             <template #title>
               <el-icon><Setting /></el-icon>
               <span>{{ item.routeName }}</span>
@@ -62,6 +62,7 @@
   const getlist = async () => {
     const { data } = await list('route', {})
     menuList.value = data
+    console.log('menuList', menuList.value)
   }
 
   // 监听路由变化，动态添加和删除标签页 
