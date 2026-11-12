@@ -69,7 +69,7 @@
   const getlist = async () => {
     const { code, data } = await list('route', {})
     if (code == 200) {
-      routeStore.saveRoute(data)
+      // routeStore.saveRoute(data)
     }
     handldRouteData(data)
     treeData.value = data

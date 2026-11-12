@@ -30,7 +30,7 @@
       </el-table-column>
     </el-table>
     <el-pagination background layout="total, prev, pager, next, jumper" :total="total" class="pagination" :page-size="form.pageSize" v-model:current-page="form.pageNo" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="500px">
+    <el-dialog title="提示" v-model="dialogVisible" width="500px">
       <span>确定删除选中数据吗？</span>
       <template #footer>
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -82,19 +82,11 @@
     if (code === 200) {
       ElMessage({ message: msg, type: 'success' })
       getlist()
+      dialogVisible.value = false
     }
   }
 
   const selectedRows = ref([])
-  const deleteSelected = async () => {
-    if (selectedRows.value.length === 0) {
-      ElMessage({ message: '请至少选择一项', type: 'warning' })
-      return
-    }
-    dialogVisible.value = true
-    deleteWay.value = 'many'
-  }
-
   const handleSelectionChange = (val) => {
     selectedRows.value = val.map(item => item._id)
   }
@@ -112,22 +104,33 @@
   const dialogVisible = ref(false),
     deleteWay = ref(null),
     deleteId = ref(null)
-  const confirmDelete = () => {
+
+  const deleteClick = (id) => {
+    dialogVisible.value = true
+    deleteWay.value = 'single'
+    deleteId.value = id
+  }
+
+  const deleteSelected = async () => {
+    if (selectedRows.value.length === 0) {
+      ElMessage({ message: '请至少选择一项', type: 'warning' })
+      return
+    }
+    dialogVisible.value = true
+    deleteWay.value = 'many'
+  }
+
+  const confirmDelete = async () => {
     if (deleteWay.value === 'many') {
       const { code, msg } = await deleteMany(apiKey, { ids: selectedRows.value })
       if (code === 200) {
         ElMessage({ message: msg, type: 'success' })
         getlist()
+        dialogVisible.value = false
       }
     }
     else if (deleteWay.value === 'single') {
       deleteSingle(deleteId.value)
     }
-  }
-  
-  const deleteClick = (id) => {
-    dialogVisible.value = true
-    deleteWay.value = 'single'
-    deleteId.value = id
   }
 </script>

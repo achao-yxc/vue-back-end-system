@@ -3,28 +3,29 @@ import { list } from '@/api/main'
 import { ElMessage } from 'element-plus'
 
 const modules = import.meta.glob('@/views/**/*.vue')
-// console.log('modules', modules)
 
-// const handleRoute = (routes, router) => {
-//   for (let item of routes) {
-//     // debugger
-//     const { component, children, path, name, routeName, routeType } = item
-//     if (component === 'Layout') {
-//       if (children && children.length > 0) {
-//         handleRoute(children, router)
-//       }
-//     }
-//     else {
-//       const componentPath = component.replace('@/', '/src/')
-//       router.addRoute('viewMain', {
-//         path,
-//         name,
-//         component: modules[componentPath],
-//         meta: { title: routeName, type: routeType }
-//       })
-//     }
-//   }
-// }
+// 将路由数据转换为树形结构
+const route2Tree = (routes) => {
+  const tree = []
+  const routeMap = new Map()
+
+  routes.forEach(route => {
+    routeMap.set(route._id, { ...route, children: [] })
+  })
+
+  routes.forEach(route => {
+    const node = routeMap.get(route._id),
+      parent = routeMap.get(route.parentId)
+
+    if (parent) {
+      parent.children.push(node)
+    } else {
+      tree.push(node)
+    }
+  })
+
+  return tree
+}
 
 export const useRouteStore = defineStore('route', {
   persist: {
@@ -32,22 +33,28 @@ export const useRouteStore = defineStore('route', {
   },
   state: () => ({
     routes: [],
+    routeTree: [],
   }),
   getters: {
     getRoute: (state) => state.routes,
+    getRouteTree: (state) => state.routeTree,
   },
   actions: {
-    async createRoute() {
-      const { code, msg, data } = await list('route', {})
-      if (code === 200) {
-        this.routes = [...data]
-        this.handleRoute(data)
-        // const result = this.router.getRoutes()
-        // console.log('createRoute', result)
+    async createRoute(routes) {
+      for (let route of routes) {
+        const { component, path, name, routeName, routeType } = route
+        if (!component || component === 'Layout') continue
+        const componentPath = component.replace('@/', '/src/')
+        this.router.addRoute('viewMain', {
+          path,
+          name,
+          component: modules[componentPath],
+          meta: { title: routeName, type: routeType }
+        })
       }
-      else {
-        ElMessage.error(msg)
-      }
+
+      this.routes = [...routes]
+      this.routeTree = route2Tree(routes)
     },
     handleRoute (routes) {
       for (let item of routes) {

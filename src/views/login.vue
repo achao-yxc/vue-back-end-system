@@ -18,7 +18,6 @@
 
 <script setup>
   import { reactive, ref } from 'vue'
-  import { login } from '@/api/main'
   import { ElMessage } from 'element-plus'
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
@@ -41,7 +40,6 @@
   const userlogin = async () => {
     await formRef.value.validate(async (valid) => {
       if (valid) {
-        routeStore.createRoute()
         userStore.login(form)
       }
     })

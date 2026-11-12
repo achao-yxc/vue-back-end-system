@@ -34,6 +34,7 @@
         roleName: '',
         routeIds: [],
       }
+      treeRef.value.setCheckedKeys(form.value.routeIds)
     }
   })
 

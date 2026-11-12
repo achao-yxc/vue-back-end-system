@@ -46,6 +46,8 @@
   import { Setting } from '@element-plus/icons-vue'
   import { useRouter, useRoute } from 'vue-router'
   import { list, add, updateOne, deleteOne } from '@/api/main'
+  import { useRouteStore } from '@/store/route'
+  import { storeToRefs } from 'pinia'
 
   defineOptions({
     name: 'viewMain'
@@ -53,39 +55,20 @@
 
   const router = useRouter()
   const route = useRoute()
-
-  // console.log('router', router)
-  // console.log('route', route)
+  const routeStore = useRouteStore()
+  const { routeTree } = storeToRefs(routeStore)
+  
+  console.log('router', router)
+  console.log('route', route)
   
   const menuList = ref(null),
     menuActive = ref(null)
-  const getlist = async () => {
-    const { data } = await list('route', {})
-    menuList.value = data
-    console.log('menuList', menuList.value)
-  }
-
-  // 监听路由变化，动态添加和删除标签页 
-  watch(() => router.currentRoute.value, async (val, oldVal) => {
-    // console.log('router.currentRoute', val, oldVal);
-    if (oldVal) {
-      const { meta: { type: oldType } } = oldVal
-      if (oldType === 'routing') {
-        const index = tabs.findIndex(tab => tab.name === oldVal.name)
-        if (index !== -1) {
-          tabs.splice(index, 1)
-        }
-      }
-    }
-    if (menuList.value === null) {
-      await getlist()
-    }
-    const { path, meta: { type } } = val
-    if (type !== 'routing') {
-      menuActive.value = path
-    }
-    initTab()
-  }, { immediate: true })
+  menuList.value = routeTree.value
+  // const getlist = async () => {
+    // const { data } = await list('route', {})
+    // menuList.value = data
+    // console.log('menuList', menuList.value)
+  // }
 
   const nodeChick = (data) => {
     // console.log(data);
@@ -98,9 +81,9 @@
   }
 
   const activeTab = ref('MainBoard')
-  const tabs = reactive([
-    { label: '看板', name: 'MainBoard', closable: false },
-  ])
+  const tabs = reactive([])
+  tabs.push({ label: route.meta.title, name: route.name, closable: false })
+  
   const handleTabClick = (tab) => {
     // console.log('handleTabClick tab', tab)
     const { paneName } = tab
@@ -131,6 +114,27 @@
     activeTab.value = name
   }
   
+  // 监听路由变化，动态添加和删除标签页 
+  watch(() => router.currentRoute.value, async (val, oldVal) => {
+    // console.log('router.currentRoute', val, oldVal);
+    if (oldVal) {
+      const { meta: { type: oldType } } = oldVal
+      if (oldType === 'routing') {
+        const index = tabs.findIndex(tab => tab.name === oldVal.name)
+        if (index !== -1) {
+          tabs.splice(index, 1)
+        }
+      }
+    }
+    if (menuList.value === null) {
+      menuList.value = routeTree.value
+    }
+    const { path, meta: { type } } = val
+    if (type !== 'routing') {
+      menuActive.value = path
+    }
+    initTab()
+  }, { immediate: true })
 </script>
 
 <style lang="scss">
