@@ -18,25 +18,25 @@
       <template #empty>
         <div class="empty">暂无数据</div>
       </template>
-      <el-table-column type="selection" width="50" />
-      <el-table-column type="index" label="序号" width="55" />
-      <el-table-column prop="username" label="姓名" width="180" />
-      <el-table-column prop="age" label="年龄" width="180" />
-      <el-table-column prop="gender" label="性别" width="180">
+      <el-table-column type="selection" width="50" align="center" />
+      <el-table-column type="index" label="序号" width="55" align="center" />
+      <el-table-column prop="username" label="姓名" width="150" align="center" />
+      <el-table-column prop="age" label="年龄" width="100" align="center" />
+      <el-table-column prop="gender" label="性别" width="100" align="center">
         <template #default="{ row }">
           {{ row.gender == '0' ? '女' : row.gender == '1' ? '男' : '未知' }}
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态">
+      <el-table-column prop="status" label="状态" align="center">
         <template #default="{ row }">
           {{ row.status == 1 ? '启用' : '禁用' }}
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="120" />
-      <el-table-column label="操作" width="200">
+      <el-table-column prop="createTime" label="创建时间" width="120" align="center" />
+      <el-table-column label="操作" width="200" align="center">
         <template #default="{ row }">
           <el-button type="primary" size="small" @click="goPage(row)">编辑</el-button>
-          <el-button type="danger" size="small" @click="deleteUser(row._id)">删除</el-button>
+          <el-button type="danger" size="small" @click="deleteClick(row._id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -45,9 +45,9 @@
 </template>
 
 <script setup>
-  import { reactive, toRefs, ref, onActivated } from 'vue'
+  import { reactive, ref, onActivated, getCurrentInstance } from 'vue'
   import { useRouter } from 'vue-router'
-  import { list, add, updateOne, deleteOne, deleteMany } from '@/api/main'
+  import { list, deleteOne, deleteMany } from '@/api/main'
   import { ElMessage } from 'element-plus'
 
   defineOptions({
@@ -58,16 +58,18 @@
     getlist()
   })
 
-  const form = reactive({
-    username: '',
-    pageNo: 1,
-    pageSize: 10,
-  })
+  const { proxy } = getCurrentInstance(),
+    apiKey = 'users',
+    form = reactive({
+      username: '',
+      pageNo: 1,
+      pageSize: 10,
+    })
   
   const userList = ref([])
   const total = ref(0)
   const getlist = async () => {
-    const { data, total: totalItems } = await list('users', form)
+    const { data, total: totalItems } = await list(apiKey, form)
     userList.value = data
     total.value = totalItems
   }
@@ -81,25 +83,9 @@
     }
   }
 
-  const deleteUser = async (_id) => {
-    const { code, msg } = await deleteOne('users', { _id })
-    if (code === 200) {
-      ElMessage({ message: msg, type: 'success' })
-      getlist()
-    }
-  }
-
   const selectedRows = ref([])
-  const deleteSelected = async () => {
-    if (selectedRows.value.length === 0) {
-      ElMessage({ message: '请至少选择一项', type: 'warning' })
-      return
-    }
-    const { code, msg } = await deleteMany('users', { ids: selectedRows.value })
-    if (code === 200) {
-      ElMessage({ message: msg, type: 'success' })
-      getlist()
-    }
+  const handleSelectionChange = (val) => {
+    selectedRows.value = val.map(item => item._id)
   }
 
   const handleSizeChange = (val) => {
@@ -112,8 +98,28 @@
     getlist()
   }
 
-  const handleSelectionChange = (val) => {
-    selectedRows.value = val.map(item => item._id)
+  const deleteSelected = () => {
+    proxy.$msgBoxConfirm('确定删除选中数据吗？').then(async () => {
+      if (selectedRows.value.length === 0) {
+        ElMessage({ message: '请至少选择一项', type: 'warning' })
+        return
+      }
+      const { code, msg } = await deleteMany(apiKey, { ids: selectedRows.value })
+      if (code === 200) {
+        ElMessage({ message: msg, type: 'success' })
+        getlist()
+      }
+    })
+  }
+
+  const deleteClick = (_id) => {
+    proxy.$msgBoxConfirm('确定删除该数据吗？').then(async () => {
+      const { code, msg } = await deleteOne(apiKey, { _id })
+      if (code === 200) {
+        ElMessage({ message: msg, type: 'success' })
+        getlist()
+      }
+    })
   }
 </script>
 

@@ -41,11 +41,10 @@
 </template>
 
 <script setup>
-  import { reactive, toRefs, ref, watch } from 'vue'
+  import { reactive, ref, watch } from 'vue'
   import avatar from '@/assets/vue.svg'
   import { Setting } from '@element-plus/icons-vue'
   import { useRouter, useRoute } from 'vue-router'
-  import { list, add, updateOne, deleteOne } from '@/api/main'
   import { useRouteStore } from '@/store/route'
   import { storeToRefs } from 'pinia'
 
@@ -64,11 +63,6 @@
   const menuList = ref(null),
     menuActive = ref(null)
   menuList.value = routeTree.value
-  // const getlist = async () => {
-    // const { data } = await list('route', {})
-    // menuList.value = data
-    // console.log('menuList', menuList.value)
-  // }
 
   const nodeChick = (data) => {
     // console.log(data);

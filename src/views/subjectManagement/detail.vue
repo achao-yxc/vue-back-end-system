@@ -1,10 +1,10 @@
 <template>
   <div class="page-detail subject-management-detail">
-    <div class="flex jc-fe">
+    <div class="flex jc-fe handle-btn">
       <el-button type="primary" class="button" @click="save">保存</el-button>
       <el-button @click="router.back()">返回</el-button>
     </div>
-    <el-form label-position="left" inline :model="form">
+    <el-form label-position="left" inline :model="form" class="box">
       <el-form-item label="科目名称">
         <el-input v-model="form.subjectName" placeholder="请输入科目名称" />
       </el-form-item>
@@ -53,6 +53,7 @@
         fileList: [],
         fileId: '',
       }
+      fileList.value = []
     }
   })
 
@@ -158,6 +159,7 @@
 
 <style lang="scss">
 .subject-management-detail {
+  .handle-btn { margin-bottom: 10px;}
   .w-100 {
     width: 90%;
   }

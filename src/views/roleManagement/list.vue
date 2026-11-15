@@ -18,11 +18,11 @@
       <template #empty>
         <div>暂无数据</div>
       </template>
-      <el-table-column type="selection" width="50" />
-      <el-table-column type="index" label="序号" width="55" />
-      <el-table-column prop="roleName" label="角色名称" />
-      <el-table-column prop="createTime" label="创建时间" width="120" />
-      <el-table-column label="操作" width="200">
+      <el-table-column type="selection" width="50" align="center" />
+      <el-table-column type="index" label="序号" width="55" align="center" />
+      <el-table-column prop="roleName" label="角色名称" align="center" />
+      <el-table-column prop="createTime" label="创建时间" width="120" align="center" />
+      <el-table-column label="操作" width="200" align="center">
         <template #default="{ row }">
           <el-button type="primary" size="small" @click="goPage(row)">编辑</el-button>
           <el-button type="danger" size="small" @click="deleteClick(row._id)">删除</el-button>
@@ -30,18 +30,11 @@
       </el-table-column>
     </el-table>
     <el-pagination background layout="total, prev, pager, next, jumper" :total="total" class="pagination" :page-size="form.pageSize" v-model:current-page="form.pageNo" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-    <el-dialog title="提示" v-model="dialogVisible" width="500px">
-      <span>确定删除选中数据吗？</span>
-      <template #footer>
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmDelete">确 定</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
-  import { reactive, ref, toRefs, onActivated } from 'vue'
+  import { reactive, ref, onActivated, getCurrentInstance } from 'vue'
   import { useRouter } from 'vue-router'
   import { list, deleteOne, deleteMany } from '@/api/main'
   import { ElMessage } from 'element-plus'
@@ -54,8 +47,9 @@
     getlist()
   })
 
-  const router = useRouter()
-  const apiKey = 'role'
+  const { proxy } = getCurrentInstance(),
+    router = useRouter(),
+    apiKey = 'role'
   const form = reactive({
     pageNo: 1,
     pageSize: 10,
@@ -101,36 +95,27 @@
     getlist()
   }
 
-  const dialogVisible = ref(false),
-    deleteWay = ref(null),
-    deleteId = ref(null)
-
-  const deleteClick = (id) => {
-    dialogVisible.value = true
-    deleteWay.value = 'single'
-    deleteId.value = id
-  }
-
-  const deleteSelected = async () => {
-    if (selectedRows.value.length === 0) {
-      ElMessage({ message: '请至少选择一项', type: 'warning' })
-      return
-    }
-    dialogVisible.value = true
-    deleteWay.value = 'many'
-  }
-
-  const confirmDelete = async () => {
-    if (deleteWay.value === 'many') {
+  const deleteSelected = () => {
+    proxy.$msgBoxConfirm('确定删除选中数据吗？').then(async () => {
+      if (selectedRows.value.length === 0) {
+        ElMessage({ message: '请至少选择一项', type: 'warning' })
+        return
+      }
       const { code, msg } = await deleteMany(apiKey, { ids: selectedRows.value })
       if (code === 200) {
         ElMessage({ message: msg, type: 'success' })
         getlist()
-        dialogVisible.value = false
       }
-    }
-    else if (deleteWay.value === 'single') {
-      deleteSingle(deleteId.value)
-    }
+    })
+  }
+
+  const deleteClick = (_id) => {
+    proxy.$msgBoxConfirm('确定删除该数据吗？').then(async () => {
+      const { code, msg } = await deleteOne(apiKey, { _id })
+      if (code === 200) {
+        ElMessage({ message: msg, type: 'success' })
+        getlist()
+      }
+    })
   }
 </script>
