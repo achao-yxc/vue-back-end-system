@@ -4,7 +4,7 @@
       <div class="header-title">系统</div>
       <div class="header-right flex">
         <el-avatar :size="35" :src="avatar" />
-        <span class="name">用户名</span>
+        <span class="name">{{ userInfo.username }}</span>
       </div>
     </el-header>
     <el-container class="container">
@@ -47,6 +47,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { useRouteStore } from '@/store/route'
   import { storeToRefs } from 'pinia'
+  import { useUserStore } from '@/store/user'
 
   defineOptions({
     name: 'viewMain'
@@ -54,11 +55,13 @@
 
   const router = useRouter()
   const route = useRoute()
+  const userStore = useUserStore(),
+    { userInfo } = storeToRefs(userStore)
   const routeStore = useRouteStore()
   const { routeTree } = storeToRefs(routeStore)
   
-  console.log('router', router)
-  console.log('route', route)
+  // console.log('router', router)
+  // console.log('route', route)
   
   const menuList = ref(null),
     menuActive = ref(null)
@@ -77,11 +80,12 @@
   const activeTab = ref('MainBoard')
   const tabs = reactive([])
   tabs.push({ label: route.meta.title, name: route.name, closable: false })
-  
+  const clickedTab = ref(false) // 用于标记是否是点击标签页触发的路由变化
   const handleTabClick = (tab) => {
     // console.log('handleTabClick tab', tab)
     const { paneName } = tab
     router.push({ name: paneName })
+    clickedTab.value = true
   }
   const handleTabsEdit = (paneName) => {
     // console.log('paneName', paneName, 'action', action)
@@ -108,9 +112,14 @@
     activeTab.value = name
   }
   
-  // 监听路由变化，动态添加和删除标签页 
+  // 监听路由变化，动态添加和删除标签页
   watch(() => router.currentRoute.value, async (val, oldVal) => {
     // console.log('router.currentRoute', val, oldVal);
+    // 如果是点击标签页触发的路由变化，则不需要处理
+    if (clickedTab.value) {
+      clickedTab.value = false
+      return
+    }
     if (oldVal) {
       const { meta: { type: oldType } } = oldVal
       if (oldType === 'routing') {

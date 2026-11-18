@@ -9,7 +9,15 @@
         <el-input v-model="form.roleName" placeholder="请输入角色名称" />
       </el-form-item>
       <el-form-item label="角色路由" class="w-100">
-        <el-tree :data="treeData" node-key="_id" :default-expand-all="true" show-checkbox :default-checked-keys="form.routeIds" @check-change="handleCheckChange" ref="treeRef" />
+        <el-tree
+          ref="treeRef"
+          :data="treeData"
+          node-key="_id"
+          :default-expand-all="true"
+          show-checkbox
+          :default-checked-keys="form.routeIds"
+          @check-change="handleCheckChange"
+        />
       </el-form-item>
     </el-form>
   </div>
@@ -33,6 +41,7 @@
       form.value = {
         roleName: '',
         routeIds: [],
+        routeHalfIds: []
       }
       treeRef.value.setCheckedKeys(form.value.routeIds)
     }
@@ -53,7 +62,9 @@
   }
 
   const save = async () => {
-    form.value.routeIds = treeRef.value.getCheckedKeys()
+    // form.value.routeIds = [...treeRef.value.getCheckedKeys(), ...treeRef.value.getHalfCheckedKeys()]
+    form.value.routeIds = [...treeRef.value.getCheckedKeys()]
+    form.value.routeHalfIds = treeRef.value.getHalfCheckedKeys()
     if (form.value._id) {
       updateData()
     } else {
@@ -107,7 +118,10 @@
     //   form.value.routeIds = form.value.routeIds.filter(id => id !== _id)
     // }
     
-    // console.log('form', form.value)
+    const checkedKeys = treeRef.value.getCheckedKeys()
+    console.log('checkedKeys', checkedKeys)
+    const halfCheckedKeys = treeRef.value.getHalfCheckedKeys()
+    console.log('halfCheckedKeys', halfCheckedKeys)
   }
 </script>
 

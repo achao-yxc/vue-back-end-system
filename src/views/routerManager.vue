@@ -46,7 +46,7 @@
   const routeStore = useRouteStore()
   const treeData = ref([]),
   handleNodeChick = (data) => {
-    console.log(data);
+    // console.log(data);
     const { _id, parentId } = data
     selectedRouteId = _id
     selectedRouteParentId.value = parentId
@@ -69,10 +69,10 @@
   const getlist = async () => {
     const { code, data } = await list('route', {})
     if (code == 200) {
+      handldRouteData(data)
+      treeData.value = data
       // routeStore.saveRoute(data)
     }
-    handldRouteData(data)
-    treeData.value = data
   }
   getlist()
 

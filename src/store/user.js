@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { login } from '@/api/main'
+import { login, userRoute } from '@/api/main'
 import { ElMessage } from 'element-plus'
 import { useRouteStore } from './route'
 
@@ -20,9 +20,16 @@ export const useUserStore = defineStore('user', {
         ElMessage.success(msg)
         this.userInfo = { ...data }
         const routeStore = useRouteStore()
-        routeStore.createRoute(data.routes)
+        await routeStore.createRoute()
         this.router.push({ name: 'MainBoard' })
       }
-    }
+    },
+    async getUserRoute () {
+      const { code, data } = await userRoute({userId: this.userInfo._id})
+      if (code === 200) {
+        const routeStore = useRouteStore()
+        routeStore.createRoute(data)
+      }
+    },
   },
 })

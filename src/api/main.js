@@ -43,3 +43,8 @@ export const fileStreamManual = (params) => {
 export const importData = (name, data) => {
   return request.post(`${name}/import`, data)
 }
+
+export const userRoute = (data) => {
+  // return request.get(`users/routes`, { params })
+  return request.post(`route/user`, data)
+}

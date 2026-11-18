@@ -62,7 +62,7 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   // debugger
   // console.log('from', from)
   // console.log('to', to)
@@ -76,7 +76,8 @@ router.beforeEach((to, from) => {
     const result = router.getRoutes()
     // 浏览器刷新
     if (result.length < 6 && routes.value.length > 0) {
-      routeStore.handleRoute(routes.value)
+      // await userStore.getUserRoute(routes.value)
+      await routeStore.createRoute()
       return { ...to, replace: true }
     }
     if (to.path === '/login') {

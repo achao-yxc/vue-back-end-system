@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { list } from '@/api/main'
 import { ElMessage } from 'element-plus'
+import { useUserStore } from './user'
+import { userRoute } from '@/api/main'
 
 const modules = import.meta.glob('@/views/**/*.vue')
 
@@ -40,21 +42,27 @@ export const useRouteStore = defineStore('route', {
     getRouteTree: (state) => state.routeTree,
   },
   actions: {
-    async createRoute(routes) {
-      for (let route of routes) {
-        const { component, path, name, routeName, routeType } = route
-        if (!component || component === 'Layout') continue
-        const componentPath = component.replace('@/', '/src/')
-        this.router.addRoute('viewMain', {
-          path,
-          name,
-          component: modules[componentPath],
-          meta: { title: routeName, type: routeType }
-        })
-      }
+    async createRoute() {
+      const userStore = useUserStore()
+      const userId = userStore.getUserInfo._id
+      // debugger
+      const { code, data } = await userRoute({userId})
+      if (code === 200) {
+        for (let route of data) {
+          const { component, path, name, routeName, routeType } = route
+          if (!component || component === 'Layout') continue
+          const componentPath = component.replace('@/', '/src/')
+          this.router.addRoute('viewMain', {
+            path,
+            name,
+            component: modules[componentPath],
+            meta: { title: routeName, type: routeType }
+          })
+        }
 
-      this.routes = [...routes]
-      this.routeTree = route2Tree(routes)
+        this.routes = [...data]
+        this.routeTree = route2Tree(data)
+      }
     },
     handleRoute (routes) {
       for (let item of routes) {
