@@ -45,7 +45,7 @@ export const useRouteStore = defineStore('route', {
     async createRoute() {
       const userStore = useUserStore()
       const userId = userStore.getUserInfo._id
-      // debugger
+
       const { code, data } = await userRoute({userId})
       if (code === 200) {
         for (let route of data) {

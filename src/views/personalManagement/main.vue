@@ -43,15 +43,8 @@
   const router = useRouter(),
     route = useRoute(),
     apiKey = 'users',
-    { userInfo } = useUserStore()
-  // const form = ref({ ...userInfo })
-  const form = ref({
-    _id: userInfo._id,
-    nickname: userInfo.nickname,
-    age: userInfo.age,
-    gender: userInfo.gender,
-    description: userInfo.description
-  })
+    userStore = useUserStore()
+  const form = ref({ ...userStore.userInfo })
 
   const getDetail = async () => {
     const { data } = await detail(apiKey, { _id: route.query.id })
@@ -79,10 +72,10 @@
   }
 
   const updateData = async () => {
-    const { code, msg } = await updateOne(apiKey, form.value)
+    const { code, data, msg } = await updateOne(apiKey, form.value)
     if (code === 200) {
       ElMessage({ message: msg, type: 'success' })
-      // router.back()
+      userStore.saveUserInfo(data)
     }
   }
 </script>

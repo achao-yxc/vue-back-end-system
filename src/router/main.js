@@ -63,20 +63,17 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
-  // debugger
   // console.log('from', from)
   // console.log('to', to)
   const userStore = useUserStore()
-  const { userInfo } = storeToRefs(userStore)
-  // console.log('userInfo', userInfo.value)
+  const { userInfo, token } = storeToRefs(userStore)
   const routeStore = useRouteStore()
   const { routes } = storeToRefs(routeStore)
   // 已登录
-  if (userInfo.value.username) {
+  if (token.value) {
     const result = router.getRoutes()
     // 浏览器刷新
     if (result.length < 6 && routes.value.length > 0) {
-      // await userStore.getUserRoute(routes.value)
       await routeStore.createRoute()
       return { ...to, replace: true }
     }

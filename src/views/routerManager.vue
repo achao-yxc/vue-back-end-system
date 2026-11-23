@@ -71,7 +71,6 @@
     if (code == 200) {
       handldRouteData(data)
       treeData.value = data
-      // routeStore.saveRoute(data)
     }
   }
   getlist()

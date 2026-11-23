@@ -9,27 +9,29 @@ export const useUserStore = defineStore('user', {
   },
   state: () => ({
     userInfo: {},
+    token: '',
   }),
   getters: {
     getUserInfo: (state) => state.userInfo,
+    getToken: (state) => state.token,
   },
   actions: {
     async login(params) {
       const { code, msg, data } = await login(params)
       if (code === 200) {
         ElMessage.success(msg)
-        this.userInfo = { ...data }
+        this.userInfo = { ...data.user }
+        this.saveToken(data.token)
         const routeStore = useRouteStore()
         await routeStore.createRoute()
         this.router.push({ name: 'MainBoard' })
       }
     },
-    async getUserRoute () {
-      const { code, data } = await userRoute({userId: this.userInfo._id})
-      if (code === 200) {
-        const routeStore = useRouteStore()
-        routeStore.createRoute(data)
-      }
+    saveUserInfo (userInfo) {
+      this.userInfo = userInfo
+    },
+    saveToken (token) {
+      this.token = token
     },
   },
 })
