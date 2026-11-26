@@ -10,6 +10,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="button" @click="userlogin">登录</el-button>
+          <!-- <el-button type="primary" class="button" @click="test">test</el-button> -->
         </el-form-item>
       </el-form>
     </div>
@@ -22,27 +23,36 @@
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
   import { useRouteStore } from '@/store/route'
+  import { getKey, encrypt } from '@/utils/encrypt'
 
   const router = useRouter()
   const userStore = useUserStore()
   const routeStore = useRouteStore()
 
   const formRef = ref(null),
-  form = reactive({}),
-  rules = reactive({
-    username: [
-      { required: true, message: '请填写', trigger: 'blur' }
-    ],
-    password: [
-      { required: true, message: '请填写', trigger: 'blur' }
-    ],
-  })
+    form = reactive({}),
+    rules = reactive({
+      username: [
+        { required: true, message: '请填写', trigger: 'blur' }
+      ],
+      password: [
+        { required: true, message: '请填写', trigger: 'blur' }
+      ],
+    })
   const userlogin = async () => {
     await formRef.value.validate(async (valid) => {
       if (valid) {
+        form.password = encrypt(form.password)
+        // const result = encrypt(form.password)
+        // console.log(result)
         userStore.login(form)
       }
     })
+  }
+
+  const test = () => {
+    console.log(getKey());
+    
   }
 </script>
 

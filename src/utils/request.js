@@ -17,7 +17,6 @@ let instance = axios.create({
 
 // 请求拦截
 instance.interceptors.request.use(config => {
-  debugger
   // console.log(config)
   const userStore = useUserStore()
   // const { token } = userStore
@@ -29,12 +28,11 @@ instance.interceptors.request.use(config => {
   return config;
 }, error => {
   console.log(error);
-  // utl.storage.sessionStorage.setStore("requestSwitch","OK");
 })
 
 // 响应拦截
 instance.interceptors.response.use(response => {
-  console.log(response);
+  // console.log(response);
   const { data: {code, msg} } = response
   switch (code) {
   //   case 401:
@@ -51,16 +49,13 @@ instance.interceptors.response.use(response => {
   return response.data
 }, error => {
   console.log(error);
-  // utl.storage.sessionStorage.setStore("requestSwitch","OK");
   const { status, response } = error
   ElMessage.error(response.data.message)
   const userStore = useUserStore()
-  const router = useRouter()
 
   switch (status) {
     case 401:
       userStore.saveToken(null)
-      // router.push({ name: 'login' })
       break
     default:
       break
